@@ -1,12 +1,12 @@
 namespace StudentScores
 
 module Float =
-    let valueOf (s: string) : option<float> =
+    let tryFloat (s: string) =
         match s with
         | "N/A" -> None
         | _ ->  Some (float s)
     
-    let getOrDefault (f: float) (s: string) : float =
+    let getOrDefault (f: float) (s: string) =
         s 
-        |> valueOf
+        |> tryFloat
         |> Option.defaultValue f

@@ -29,8 +29,8 @@ module Student =
         let from (s: string) =
             let elements = s.Split(',')
             {
-                Surname = elements[0]
-                Given = elements[1]
+                Surname = elements[0].Trim()
+                Given = elements[1].Trim()
             }
     
     type Student =

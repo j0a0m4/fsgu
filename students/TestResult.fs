@@ -1,12 +1,12 @@
 namespace StudentScores
 
-module TestResult = 
+module TestResult =
     type TestResult =
         | Absent
         | Excused
         | Voided
         | Scored of float
-    
+
     let from s =
         match s with
         | "A" -> Absent
@@ -18,5 +18,5 @@ module TestResult =
         match testResult with
         | Scored score -> Some score
         | Absent -> Some 0.0
-        | Excused 
+        | Excused
         | Voided -> None

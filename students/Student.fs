@@ -83,11 +83,11 @@ module Student =
         let summarize filePath =
             let students = filePath |> readFile
 
+            printfn "\nStudents Summary:"
             students |> printCount
 
-            students
-            |> printBy (
-                Array.sortByDescending (fun s -> s.Score.Mean)
-            )
+            printfn "\nStudents sorted by descending mean score:"
+            students |> printBy (Array.sortByDescending _.Score.Mean)
 
-            students |> printBy (Array.sortBy (fun s -> s.Name))
+            printfn "\nStudents sorted by ascending given name:"
+            students |> printBy (Array.sortBy _.Name.Given)

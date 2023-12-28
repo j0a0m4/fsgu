@@ -8,11 +8,16 @@ module Student =
                 Min: float
                 Max: float
             }
+        
+        let notExcused tr = 
+            (tr = TestResult.Excused) 
+            |> not 
+        
         let from (data: array<string>) =
             let score =
               data 
                 |> Array.map TestResult.from
-                |> Array.filter (fun it -> (it = TestResult.Excused) |> not )
+                |> Array.filter notExcused
                 |> Array.choose TestResult.tryEffectiveScore
             {
                 Mean = score |> Array.average

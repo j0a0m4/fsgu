@@ -12,7 +12,7 @@ module TestResult =
         | "A" -> Absent
         | "E" -> Excused
         | "V" -> Voided
-        | _ -> Scored (s |> float)
+        | _ -> Scored(s |> float)
 
     let tryEffectiveScore (testResult: TestResult) =
         match testResult with

@@ -32,11 +32,11 @@ module Student =
             }
 
         let from (s: string) =
-            let elements = s.Split (',')
+            let elements = s.Split(',')
 
             {
-                Surname = elements[0].Trim ()
-                Given = elements[1].Trim ()
+                Surname = elements[0].Trim()
+                Given = elements[1].Trim()
             }
 
     type Student =
@@ -47,7 +47,7 @@ module Student =
         }
 
     let from (s: string) : Student =
-        let data = s.Split ('\t')
+        let data = s.Split('\t')
 
         {
             ID = data[1]
@@ -80,6 +80,14 @@ module Student =
             |> Array.map toString
             |> Array.iter (printfn "%s")
 
+        let printBySurname (sn: string, sta: array<Student>) =
+            printfn "%s" (sn.ToUpperInvariant())
+
+            sta
+            |> Array.sortBy (fun s -> s.Name.Given, s.ID)
+            |> Array.map toString
+            |> Array.iter (printfn "\t%s")
+
         let summarize filePath =
             let students = filePath |> readFile
 
@@ -91,3 +99,9 @@ module Student =
 
             printfn "\nStudents sorted by ascending given name:"
             students |> printBy (Array.sortBy _.Name.Given)
+
+            printfn "\nStudents grouped by ascending surname:"
+
+            students
+            |> Array.groupBy _.Name.Surname
+            |> Array.iter printBySurname

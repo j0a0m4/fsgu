@@ -9,6 +9,8 @@ module Brick =
             StudRows: int
             Color: ConsoleColor
         }
+    
+    let studCount b = b.StudColumns * b.StudRows
 
     let bricks =
         [|

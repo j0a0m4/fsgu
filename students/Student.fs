@@ -11,17 +11,17 @@ module Student =
 
         let notExcused tr = (tr = TestResult.Excused) |> not
 
-        let from (data: array<string>) =
+        let from (data: seq<string>) =
             let score =
                 data
-                |> Array.map TestResult.from
-                |> Array.filter notExcused
-                |> Array.choose TestResult.tryEffectiveScore
+                |> Seq.map TestResult.from
+                |> Seq.filter notExcused
+                |> Seq.choose TestResult.tryEffectiveScore
 
             {
-                Mean = score |> Array.average
-                Min = score |> Array.min
-                Max = score |> Array.max
+                Mean = score |> Seq.average
+                Min = score |> Seq.min
+                Max = score |> Seq.max
             }
 
     module Name =
@@ -52,7 +52,7 @@ module Student =
         {
             ID = data[1]
             Name = data[0] |> Name.from
-            Score = data |> Array.skip 2 |> Score.from
+            Score = data |> Seq.skip 2 |> Score.from
         }
 
     let toString (s: Student) =
@@ -65,43 +65,40 @@ module Student =
     module API =
         open System.IO
 
-        let readFile (filePath: string) : array<Student> =
-            filePath
-            |> File.ReadAllLines
-            |> Array.skip 1
-            |> Array.map from
+        let readFile (filePath: string) : seq<Student> =
+            filePath |> File.ReadLines |> Seq.skip 1 |> Seq.map from
 
         let printCount students =
-            students |> Array.length |> printfn "Students count: %i"
+            students |> Seq.length |> printfn "Students count: %i"
 
         let printBy func students =
             students
             |> func
-            |> Array.map toString
-            |> Array.iter (printfn "%s")
+            |> Seq.map toString
+            |> Seq.iter (printfn "%s")
 
-        let printBySurname (sn: string, sta: array<Student>) =
+        let printBySurname (sn: string, sts: seq<Student>) =
             printfn "%s" (sn.ToUpperInvariant())
 
-            sta
-            |> Array.sortBy (fun s -> s.Name.Given, s.ID)
-            |> Array.map toString
-            |> Array.iter (printfn "\t%s")
+            sts
+            |> Seq.sortBy (fun s -> s.Name.Given, s.ID)
+            |> Seq.map toString
+            |> Seq.iter (printfn "\t%s")
 
         let summarize filePath =
-            let students = filePath |> readFile
+            let students = filePath |> readFile |> Seq.cache
 
             printfn "\nStudents Summary:"
             students |> printCount
 
             printfn "\nStudents sorted by descending mean score:"
-            students |> printBy (Array.sortByDescending _.Score.Mean)
+            students |> printBy (Seq.sortByDescending _.Score.Mean)
 
             printfn "\nStudents sorted by ascending given name:"
-            students |> printBy (Array.sortBy _.Name.Given)
+            students |> printBy (Seq.sortBy _.Name.Given)
 
             printfn "\nStudents grouped by ascending surname:"
 
             students
-            |> Array.groupBy _.Name.Surname
-            |> Array.iter printBySurname
+            |> Seq.groupBy _.Name.Surname
+            |> Seq.iter printBySurname

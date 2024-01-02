@@ -42,6 +42,8 @@ module Student =
             }
 
     module School =
+        type Codes = Map<int, string>
+
         let private from (s: string) =
             let elements = s.Split("\t")
             (elements[0] |> int, elements[1])
@@ -60,14 +62,20 @@ module Student =
             School: string
         }
 
-    let from (schoolCodes: Map<int, string>) (s: string) : Student =
+    let from (schoolCodes: School.Codes) (s: string) : Student =
         let data = s.Split('\t')
+
+        let schoolCode = data[2] |> int
+        let school = 
+            schoolCodes
+            |> Map.tryFind schoolCode
+            |> Option.defaultValue "(Unknown)"
 
         {
             ID = data[1]
             Name = data[0] |> Name.from
             Score = data |> Seq.skip 3 |> Score.from
-            School = schoolCodes[data[2] |> int]
+            School = school
         }
 
     let toString (s: Student) =

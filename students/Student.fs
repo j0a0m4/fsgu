@@ -1,5 +1,7 @@
 namespace StudentScores
 
+open System.IO
+
 module Student =
     module Score =
         type Score =
@@ -39,45 +41,60 @@ module Student =
                 Given = elements[1].Trim()
             }
 
+    module School =
+        let private from (s: string) =
+            let elements = s.Split("\t")
+            (elements[0] |> int, elements[1])
+
+        let private toCodes content =
+            content |> Seq.map from |> Map.ofSeq
+
+        let loadSchoolCodes filePath =
+            filePath |> File.ReadLines |> Seq.skip 1 |> toCodes
+
     type Student =
         {
             ID: string
             Name: Name.Name
             Score: Score.Score
+            School: string
         }
 
-    let from (s: string) : Student =
+    let from (schoolCodes: Map<int, string>) (s: string) : Student =
         let data = s.Split('\t')
 
         {
             ID = data[1]
             Name = data[0] |> Name.from
-            Score = data |> Seq.skip 2 |> Score.from
+            Score = data |> Seq.skip 3 |> Score.from
+            School = schoolCodes[data[2] |> int]
         }
 
     let toString (s: Student) =
         $"ID: %s{s.ID}\t"
         + $"Name: %s{s.Name.Surname},%s{s.Name.Given}\t"
+        + $"School: %s{s.School}\t"
         + $"Mean: %0.1f{s.Score.Mean}\t"
         + $"Min: %0.1f{s.Score.Min}\t"
         + $"Max: %0.1f{s.Score.Max}"
 
     module API =
-        open System.IO
+        let private loadStudents schoolCodes studentsPath =
+            studentsPath
+            |> File.ReadLines
+            |> Seq.skip 1
+            |> Seq.map (from schoolCodes)
 
-        let readFile (filePath: string) : seq<Student> =
-            filePath |> File.ReadLines |> Seq.skip 1 |> Seq.map from
-
-        let printCount students =
+        let private printCount students =
             students |> Seq.length |> printfn "Students count: %i"
 
-        let printBy func students =
+        let private printBy func students =
             students
             |> func
             |> Seq.map toString
             |> Seq.iter (printfn "%s")
 
-        let printBySurname (sn: string, sts: seq<Student>) =
+        let private printBySurname (sn: string, sts: seq<Student>) =
             printfn "%s" (sn.ToUpperInvariant())
 
             sts
@@ -85,8 +102,12 @@ module Student =
             |> Seq.map toString
             |> Seq.iter (printfn "\t%s")
 
-        let summarize filePath =
-            let students = filePath |> readFile |> Seq.cache
+        let summarize studentsCodeFile studentsFile =
+            let schoolCodes =
+                studentsCodeFile |> School.loadSchoolCodes
+
+            let students =
+                studentsFile |> loadStudents schoolCodes |> Seq.cache
 
             printfn "\nStudents Summary:"
             students |> printCount

@@ -5,14 +5,15 @@ open StudentScores
 [<EntryPoint>]
 let main argv =
     match argv.Length with
-    | 1 ->
-        let filePath = argv |> Array.head
+    | 2 ->
+        let schoolCodes = argv |> Array.head
+        let studentRecords = argv[1]
 
-        if filePath |> File.Exists then
-            printfn $"Handling file: %s{filePath}"
+        if schoolCodes |> File.Exists then
+            printfn $"Handling file: %s{schoolCodes}"
 
             try
-                Student.API.summarize filePath
+                studentRecords |> Student.API.summarize schoolCodes
                 0
             with
             | :? FormatException as e ->
@@ -30,8 +31,10 @@ let main argv =
                 printfn "An unexpected error occurred: %s" e.Message
                 5
         else
-            printfn "File not found: %s" filePath
+            printfn "File not found: %s" schoolCodes
             2
     | _ ->
-        printfn "Please specify a file"
+        printfn
+            "Please specify a file for student codes and another for student records"
+
         1

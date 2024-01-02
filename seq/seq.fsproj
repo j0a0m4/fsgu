@@ -6,6 +6,7 @@
   <ItemGroup>
     <Compile Include="Pell.fs" />
     <Compile Include="Fibonacci.fs" />
+    <Compile Include="Drunkard.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>

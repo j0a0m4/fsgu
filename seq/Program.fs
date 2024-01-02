@@ -1,12 +1,13 @@
 ﻿open MathSequence
 
-Pell.get 10
-|> Seq.iter (printf "%i, ")
+let printSequence s =
+    s |> Seq.iter (printf "%i, ")
+    printfn "..."
 
-printfn "..."
+Pell.get 10 |> printSequence
 
+Fibonacci.get 10 |> printSequence
 
-Fibonacci.get 10
-|> Seq.iter (printf "%i, ")
-
+Drunkard.get 20
+|> Seq.iter (fun st -> printf "(%i, %i), " st.x st.y)
 printfn "..."

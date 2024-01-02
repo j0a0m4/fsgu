@@ -22,14 +22,14 @@ module Pell =
         | _ -> 2 * st.Pn1 + st.Pn2
 
     let private nextSt st pn =
-        let nextSt =
+        let next =
             {
                 n = st.n + 1
                 Pn1 = pn
                 Pn2 = st.Pn1
             }
 
-        (pn, nextSt)
+        (pn, next)
 
     let private pell initSt =
         initSt |> nextPn |> nextSt initSt |> Some
